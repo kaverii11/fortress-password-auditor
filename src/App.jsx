@@ -63,8 +63,11 @@ function App() {
         setStats(analysis);
         
         setHistory(prev => {
-            const newEntry = { step: prev.length + 1, score: analysis.score };
-            return [...prev, newEntry].slice(-10);
+            // If history is empty, start from 0 so the line shoots up!
+            const baseHistory = prev.length === 0 ? [{ step: 0, score: 0 }] : prev;
+            
+            const newEntry = { step: baseHistory.length + 1, score: analysis.score };
+            return [...baseHistory, newEntry].slice(-10);
         });
 
         if (password.length > 3) {
@@ -177,7 +180,7 @@ function App() {
               </div>
 
               {/* --- GRAPH --- */}
-              {history.length > 1 && (
+              {history.length > 0 && (
                 <div className="chart-wrapper">
                     <h3 style={{marginBottom: '10px', color: '#666'}}>📈 Strength Trend</h3>
                     <div style={{ width: '100%', height: 150 }}>
