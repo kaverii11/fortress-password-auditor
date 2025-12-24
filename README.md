@@ -1,16 +1,64 @@
-# React + Vite
+# 🛡️ Fortress AI - Semantic Password Auditor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![React](https://img.shields.io/badge/React-Vite-blue)
+![Security](https://img.shields.io/badge/Security-zxcvbn-green)
+![API](https://img.shields.io/badge/API-HaveIBeenPwned-orange)
 
-Currently, two official plugins are available:
+**Fortress AI** is a modern cybersecurity dashboard that goes beyond simple "length checks." It uses **semantic analysis** to detect predictable human patterns and scans the Dark Web for breached passwords without ever exposing user data.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔴 **Live Demo:** https://vercel.com/kaveris-projects-05989914/fortress-password-auditor
+---
 
-## React Compiler
+## 📸 Screenshots
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+<div style="display: flex; justify-content: center; gap: 10px;">
+  <img src="[LINK_TO_AUDITOR_SCREENSHOT]" width="48%" />
+  <img src="[LINK_TO_GENERATOR_SCREENSHOT]" width="48%" />
+</div>
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🔐 Key Features
+
+### 1. 🧠 Semantic Analysis (The "Brain")
+* Unlike regex-based checkers, Fortress uses **`zxcvbn`**, a heuristic engine that detects:
+    * **Keyboard patterns** (e.g., "qwerty", "qazwsx").
+    * **L33t speak** (e.g., "P@ssw0rd").
+    * **Personal info** (dates, years, common names).
+* It calculates the **Entropy** (mathematical randomness) to estimate "Time to Crack."
+
+### 2. 🌍 Breach Detection (k-Anonymity)
+* Connects to the **Have I Been Pwned (HIBP)** database containing billions of leaked passwords.
+* **Privacy First:** Uses **k-anonymity**. 
+    * We hash the password (SHA-1).
+    * We send **only the first 5 characters** of the hash to the API.
+    * The API returns all matches, and we check the rest locally.
+    * **The real password never leaves the user's browser.**
+
+### 3. 🎲 XKCD Generator
+* Generates high-entropy, memorable passphrases (e.g., `Correct-Horse-Battery-Staple`).
+* Based on the famous [XKCD 936](https://xkcd.com/936/) comic logic: easier for humans to remember, harder for computers to guess.
+
+---
+
+## 🛠️ Tech Stack
+
+* **Frontend:** React.js (Vite)
+* **Styling:** CSS3 (Custom Dark Mode)
+* **Logic:** JavaScript (ES6+), Debouncing
+* **Libraries:** `zxcvbn` (Dropbox), `react-icons`
+
+---
+
+## 🚀 How to Run Locally
+
+
+# 1. Clone the repo
+git clone [https://github.com/YOUR_USERNAME/fortress-password-auditor.git](https://github.com/YOUR_USERNAME/fortress-password-auditor.git)
+
+# 2. Install dependencies
+npm install
+
+# 3. Run the dev server
+npm run dev
