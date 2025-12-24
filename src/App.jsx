@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { analyzePassword, checkPwned } from './utils/PasswordLogic';
 import { wordList } from './utils/words';
-import { FaShieldAlt, FaExclamationTriangle, FaCheckCircle, FaEye, FaEyeSlash, FaDice, FaCopy, FaSave, FaTrash, FaHdd, FaGithub, FaLinkedin } from 'react-icons/fa'; // <--- Added Social Icons
+import { FaShieldAlt, FaExclamationTriangle, FaCheckCircle, FaEye, FaEyeSlash, FaDice, FaCopy, FaSave, FaTrash, FaHdd, FaGithub, FaLinkedin, FaInfoCircle } from 'react-icons/fa';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import './index.css';
 
 function App() {
@@ -19,13 +20,16 @@ function App() {
   const [stats, setStats] = useState(null);
   const [pwnedCount, setPwnedCount] = useState(null);
   const [loading, setLoading] = useState(false);
+  
+  // --- HISTORY STATE ---
+  const [history, setHistory] = useState([]);
 
   // --- GENERATOR STATE ---
   const [genPassword, setGenPassword] = useState('');
   const [genType, setGenType] = useState('xkcd');
   const [copied, setCopied] = useState(false);
 
-  // --- PERSIST VAULT LOGIC ---
+  // --- PERSIST VAULT ---
   useEffect(() => {
     localStorage.setItem('fortressVault', JSON.stringify(vault));
   }, [vault]);
@@ -58,6 +62,11 @@ function App() {
         const analysis = analyzePassword(password);
         setStats(analysis);
         
+        setHistory(prev => {
+            const newEntry = { step: prev.length + 1, score: analysis.score };
+            return [...prev, newEntry].slice(-10);
+        });
+
         if (password.length > 3) {
             const leaks = await checkPwned(password);
             setPwnedCount(leaks);
@@ -114,7 +123,6 @@ function App() {
         <p className="branding">Architected by <span className="highlight">@kaverii11</span></p>
       </div>
 
-      {/* --- TAB SWITCHER --- */}
       <div className="tab-container">
         <button className={`tab-btn ${activeTab === 'auditor' ? 'active' : ''}`} onClick={() => setActiveTab('auditor')}>Audit</button>
         <button className={`tab-btn ${activeTab === 'generator' ? 'active' : ''}`} onClick={() => setActiveTab('generator')}>Generate</button>
@@ -149,6 +157,7 @@ function App() {
               <div className="strength-bar-bg">
                 <div style={{ height: '100%', width: `${(stats.score + 1) * 20}%`, backgroundColor: getColor(stats.score), transition: 'width 0.3s ease' }} />
               </div>
+              
               <div className="grid-stats">
                 <div className="card">
                   <h3>🧠 AI Analysis</h3>
@@ -166,6 +175,36 @@ function App() {
                   )}
                 </div>
               </div>
+
+              {/* --- GRAPH --- */}
+              {history.length > 1 && (
+                <div className="chart-wrapper">
+                    <h3 style={{marginBottom: '10px', color: '#666'}}>📈 Strength Trend</h3>
+                    <div style={{ width: '100%', height: 150 }}>
+                        <ResponsiveContainer>
+                            <LineChart data={history}>
+                                <XAxis dataKey="step" hide />
+                                <YAxis domain={[0, 4]} hide />
+                                <Tooltip contentStyle={{ backgroundColor: '#111', border: '1px solid #333' }} itemStyle={{ color: '#00C851' }} />
+                                <Line type="monotone" dataKey="score" stroke="#00C851" strokeWidth={3} dot={{r: 4, fill: '#111', stroke: '#00C851'}} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+              )}
+
+              {/* --- NEW: SCORE GUIDE --- */}
+              <div className="score-legend-wrapper">
+                <h3><FaInfoCircle /> Score Guide</h3>
+                <div className="score-grid">
+                  <div className="score-item"><span className="badge badge-0">0</span> Too Guessable</div>
+                  <div className="score-item"><span className="badge badge-1">1</span> Very Weak</div>
+                  <div className="score-item"><span className="badge badge-2">2</span> Weak</div>
+                  <div className="score-item"><span className="badge badge-3">3</span> Safe</div>
+                  <div className="score-item"><span className="badge badge-4">4</span> Very Strong</div>
+                </div>
+              </div>
+
             </div>
           )}
         </>
@@ -178,16 +217,10 @@ function App() {
               <label><input type="radio" name="genType" checked={genType === 'xkcd'} onChange={() => setGenType('xkcd')} /> XKCD (Memorable)</label>
               <label style={{ marginLeft: '15px' }}><input type="radio" name="genType" checked={genType === 'random'} onChange={() => setGenType('random')} /> Random (Complex)</label>
            </div>
-
-           <button className="generate-btn" onClick={generatePass}>
-             <FaDice /> Generate New
-           </button>
-
+           <button className="generate-btn" onClick={generatePass}><FaDice /> Generate New</button>
            {genPassword && (
              <div className="gen-result-wrapper">
-                <div className="gen-result">
-                  {genPassword}
-                </div>
+                <div className="gen-result">{genPassword}</div>
                 <div className="gen-actions">
                   <button onClick={() => copyToClipboard(genPassword)} title="Copy"><FaCopy /></button>
                   <button onClick={() => saveToVault(genPassword)} title="Save to Vault"><FaSave /></button>
@@ -202,19 +235,15 @@ function App() {
       {activeTab === 'vault' && (
         <div className="vault-panel">
           {vault.length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#666', padding: '2rem' }}>
+             <div style={{ textAlign: 'center', color: '#666', padding: '2rem' }}>
               <FaHdd size={40} style={{ marginBottom: '1rem', opacity: 0.5 }} />
               <p>Your vault is empty.</p>
-              <small>Generate or Audit a password and click the Save icon.</small>
             </div>
           ) : (
             <div className="vault-list">
               {vault.map((item) => (
                 <div key={item.id} className="vault-item">
-                  <div className="vault-info">
-                    <span className="vault-pass">{item.pass}</span>
-                    <span className="vault-date">{item.date}</span>
-                  </div>
+                  <div className="vault-info"><span className="vault-pass">{item.pass}</span><span className="vault-date">{item.date}</span></div>
                   <div className="vault-actions">
                     <button onClick={() => copyToClipboard(item.pass)}><FaCopy /></button>
                     <button onClick={() => deleteFromVault(item.id)} className="delete-btn"><FaTrash /></button>
@@ -226,22 +255,15 @@ function App() {
         </div>
       )}
 
-      {/* --- UPDATED FOOTER --- */}
       <div className="footer">
         <p>🔒 Secure. Private. Client-Side Only.</p>
         <div className="social-links" style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '10px' }}>
-          <a href="https://github.com/kaverii11" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '1.5rem', transition: 'color 0.3s' }}>
-            <FaGithub />
-          </a>
-          <a href="https://www.linkedin.com/in/kaveri-sharma-48220926a/" target="_blank" rel="noopener noreferrer" style={{ color: '#0077b5', fontSize: '1.5rem', transition: 'color 0.3s' }}>
-            <FaLinkedin />
-          </a>
+          <a href="https://github.com/kaverii11" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '1.5rem' }}><FaGithub /></a>
+          <a href="https://www.linkedin.com/in/kaveri-sharma-48220926a/" target="_blank" rel="noopener noreferrer" style={{ color: '#0077b5', fontSize: '1.5rem' }}><FaLinkedin /></a>
         </div>
         <p style={{ marginTop: '10px', fontSize: '0.8rem', color: '#666' }}>© 2025 Kaveri Sharma</p>
       </div>
-
     </div>
   );
 }
-
 export default App;

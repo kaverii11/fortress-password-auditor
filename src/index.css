@@ -270,3 +270,62 @@
   
   .vault-actions button:hover { color: #fff; background: #333; }
   .vault-actions button.delete-btn:hover { color: #ff4444; background: #330000; }
+  /* --- GRAPH --- */
+.chart-wrapper {
+    margin-top: 20px;
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #333;
+  }
+  /* --- SCORE LEGEND --- */
+.score-legend-wrapper {
+    margin-top: 25px;
+    background: #111;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #222;
+  }
+  
+  .score-legend-wrapper h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Responsive Grid */
+    gap: 10px;
+  }
+  
+  .score-item {
+    font-size: 0.8rem;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .badge {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-weight: bold;
+    color: #000;
+    font-size: 0.8rem;
+  }
+  
+  /* Badge Colors matching the zxcvbn scale */
+  .badge-0 { background-color: #ff4444; } /* Red */
+  .badge-1 { background-color: #ffbb33; } /* Orange */
+  .badge-2 { background-color: #ffeb3b; } /* Yellow */
+  .badge-3 { background-color: #00C851; } /* Green */
+  .badge-4 { background-color: #00ff66; box-shadow: 0 0 8px #00ff66; } /* Bright Green + Glow */
