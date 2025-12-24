@@ -63,13 +63,16 @@ function App() {
         setStats(analysis);
         
         setHistory(prev => {
-            // If history is empty, start from 0 so the line shoots up!
+            // 1. If empty, create the "Zero Start" base
             const baseHistory = prev.length === 0 ? [{ step: 0, score: 0 }] : prev;
             
-            const newEntry = { step: baseHistory.length + 1, score: analysis.score };
+            // 2. FIXED: Get the step number from the LAST item, not the array length
+            const lastStep = baseHistory[baseHistory.length - 1].step;
+            
+            const newEntry = { step: lastStep + 1, score: analysis.score };
             return [...baseHistory, newEntry].slice(-10);
         });
-
+        
         if (password.length > 3) {
             const leaks = await checkPwned(password);
             setPwnedCount(leaks);
