@@ -182,7 +182,7 @@ function App() {
               {/* --- GRAPH --- */}
               {history.length > 0 && (
                 <div className="chart-wrapper">
-                    <h3 style={{marginBottom: '10px', color: '#666'}}>📈 Strength Trend</h3>
+                    <h3 style={{marginBottom: '10px', color: '#fff'}}>📈 Strength Trend</h3>
                     <div style={{ width: '100%', height: 150 }}>
                         <ResponsiveContainer>
                             <LineChart data={history}>
