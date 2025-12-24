@@ -1,34 +1,34 @@
 :root {
     font-family: 'Courier New', monospace;
-    background-color: #0a0a0a; /* Darker black */
+    background-color: #050505; /* Deepest black */
     color: #fff;
   }
   
   body {
     margin: 0;
+    min-height: 100vh;
+    /* Subtle green glow in the background center */
+    background: radial-gradient(circle at 50% 10%, rgba(0, 200, 81, 0.15) 0%, rgba(5, 5, 5, 1) 70%);
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    align-items: flex-start; /* Start from top, don't center vertically */
+    padding-top: 40px;
   }
   
+  /* --- THE INVISIBLE CONTAINER --- */
   .dashboard-container {
-    width: 100%;
-    max-width: 500px;
-    background: #121212;
-    padding: 3rem;
-    border-radius: 20px;
-    border: 1px solid #333;
-    box-shadow: 0 0 40px rgba(0, 200, 81, 0.05);
-    position: relative;
+    width: 95%;           
+    max-width: 1600px;   
+    margin: 0 auto;
+    padding: 2rem;
+    background: transparent;
   }
-  
   /* --- BIGGER TYPOGRAPHY --- */
   .title-glow {
-    font-size: 3.5rem;
+    font-size: 4rem; /* Even bigger */
     margin: 10px 0;
-    text-shadow: 0 0 10px rgba(0, 200, 81, 0.5);
-    letter-spacing: -2px;
+    text-shadow: 0 0 20px rgba(0, 200, 81, 0.4);
+    letter-spacing: -3px;
   }
   
   .subtitle {
@@ -38,7 +38,7 @@
   }
   
   .branding {
-    color: #666;
+    color: #555;
     font-size: 1rem;
     margin-top: 0;
   }
@@ -48,32 +48,35 @@
     font-weight: bold;
   }
   
-  /* --- CHUNKY INPUTS --- */
+  /* --- GLASSMORPHISM INPUTS --- */
   .cyber-input {
     width: 100%;
-    padding: 20px;
-    font-size: 1.5rem;
-    border-radius: 12px;
-    border: 2px solid #333;
-    background-color: #1a1a1a;
+    padding: 25px;
+    font-size: 1.8rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03); /* See-through glass */
     color: #fff;
     outline: none;
     font-family: 'Courier New', monospace;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
   }
   
   .cyber-input:focus {
     border-color: #00C851;
-    box-shadow: 0 0 15px rgba(0, 200, 81, 0.2);
+    background: rgba(0, 200, 81, 0.05);
+    box-shadow: 0 0 30px rgba(0, 200, 81, 0.1);
   }
   
   /* --- TABS --- */
   .tab-container {
     display: flex;
-    margin-bottom: 30px;
-    background: #1a1a1a;
-    border-radius: 12px;
-    padding: 8px;
+    margin-bottom: 40px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
   
   .tab-btn {
@@ -83,9 +86,9 @@
     color: #666;
     padding: 15px;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 12px;
     font-family: 'Courier New', monospace;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
     transition: all 0.3s;
   }
@@ -93,198 +96,154 @@
   .tab-btn.active {
     background: #00C851;
     color: #000;
-    box-shadow: 0 0 15px rgba(0, 200, 81, 0.4);
+    box-shadow: 0 0 20px rgba(0, 200, 81, 0.3);
   }
   
-  /* --- CARDS & STATS --- */
+  /* --- GLASS CARDS --- */
   .grid-stats {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 2rem; 
+    margin-top: 2rem;
   }
   
   .card {
-    background: #1a1a1a;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #333;
+    background: rgba(20, 20, 20, 0.6); /* Semi-transparent */
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px); /* Frosted Glass Effect */
+    transition: transform 0.2s;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px); /* Lift up on hover */
+    border-color: rgba(0, 200, 81, 0.3);
   }
   
   .card h3 {
     margin-top: 0;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
   
   .card p {
     font-size: 1.1rem;
+    line-height: 1.5;
   }
   
   /* --- GENERATOR --- */
   .gen-result {
-    margin-top: 25px;
-    background: #050505;
-    padding: 25px;
-    border-radius: 12px;
-    border: 2px dashed #00C851;
+    margin-top: 30px;
+    background: rgba(0, 200, 81, 0.05);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px dashed rgba(0, 200, 81, 0.5);
     color: #00C851;
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
-    cursor: pointer;
     text-align: center;
-    position: relative;
     word-break: break-all;
+    text-shadow: 0 0 10px rgba(0, 200, 81, 0.3);
   }
   
   .generate-btn {
     width: 100%;
-    padding: 20px;
-    background: #1a1a1a;
+    padding: 22px;
+    background: #111;
     color: #fff;
-    border: 1px solid #444;
-    border-radius: 12px;
+    border: 1px solid #333;
+    border-radius: 14px;
     cursor: pointer;
     font-family: 'Courier New', monospace;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     transition: all 0.2s;
   }
   
   .generate-btn:hover {
-    background: #222;
+    background: #1a1a1a;
     border-color: #00C851;
+    color: #00C851;
   }
   
   /* --- FOOTER --- */
   .footer {
-    margin-top: 3rem;
+    margin-top: 5rem;
     text-align: center;
     color: #444;
     font-size: 0.9rem;
-    border-top: 1px solid #222;
-    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 2rem;
   }
   
   /* --- UTILS --- */
   .input-wrapper { position: relative; width: 100%; margin-bottom: 25px; }
-  .strength-bar-bg { height: 12px; width: 100%; background-color: #333; border-radius: 6px; overflow: hidden; margin-bottom: 1.5rem; }
-  .eye-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; font-size: 1.5rem; display: flex; }
+  .strength-bar-bg { height: 8px; width: 100%; background-color: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 2rem; margin-top: 1rem; }
+  .eye-icon { position: absolute; right: 25px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; font-size: 1.8rem; display: flex; }
   .eye-icon:hover { color: #00C851; }
-  .copy-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #fff; font-size: 1.2rem; }
-  
-  /* --- VAULT & ACTIONS --- */
-  .save-icon-input {
-    position: absolute;
-    right: 55px; /* Sits next to the eye icon */
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #666;
-    font-size: 1.5rem;
-    display: flex;
-  }
+  .save-icon-input { position: absolute; right: 70px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; font-size: 1.8rem; display: flex; }
   .save-icon-input:hover { color: #00C851; }
   
-  .gen-result-wrapper {
-    margin-top: 25px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .gen-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-  }
-  
-  .gen-actions button {
-    background: #222;
-    border: 1px solid #444;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.2s;
-  }
-  .gen-actions button:hover { background: #333; border-color: #00C851; color: #00C851; }
+  .gen-result-wrapper { margin-top: 25px; display: flex; flex-direction: column; gap: 15px; }
+  .gen-actions { display: flex; gap: 15px; justify-content: center; }
+  .gen-actions button { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 1.3rem; transition: all 0.2s; }
+  .gen-actions button:hover { background: rgba(0,200,81,0.1); border-color: #00C851; color: #00C851; }
   
   /* --- VAULT LIST --- */
   .vault-item {
-    background: #1a1a1a;
-    border: 1px solid #333;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: background 0.2s;
   }
+  .vault-item:hover { background: rgba(255, 255, 255, 0.06); }
+  .vault-info { display: flex; flex-direction: column; }
+  .vault-pass { font-size: 1.2rem; font-weight: bold; color: #fff; letter-spacing: 1px; }
+  .vault-date { font-size: 0.8rem; color: #666; margin-top: 4px; }
+  .vault-actions { display: flex; gap: 10px; }
+  .vault-actions button { background: transparent; border: 1px solid #333; color: #888; padding: 10px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+  .vault-actions button:hover { color: #fff; border-color: #fff; }
+  .vault-actions button.delete-btn:hover { color: #ff4444; border-color: #ff4444; background: rgba(255, 68, 68, 0.1); }
   
-  .vault-info {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .vault-pass {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #fff;
-    letter-spacing: 1px;
-  }
-  
-  .vault-date {
-    font-size: 0.8rem;
-    color: #666;
-    margin-top: 4px;
-  }
-  
-  .vault-actions {
-    display: flex;
-    gap: 8px;
-  }
-  
-  .vault-actions button {
-    background: #222;
-    border: none;
-    color: #888;
-    padding: 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .vault-actions button:hover { color: #fff; background: #333; }
-  .vault-actions button.delete-btn:hover { color: #ff4444; background: #330000; }
-  
-  /* --- GRAPH --- */
+  /* --- GRAPH & LEGEND --- */
   .chart-wrapper {
-    margin-top: 20px;
-    background: #1a1a1a;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid #333;
+    margin-top: 25px;
+    background: rgba(20, 20, 20, 0.6);
+    padding: 25px;       /* More padding for the big graph */
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    width: 100%;         /* Force full width */
+    box-sizing: border-box; /* Prevents scrollbars */
   }
   
-  /* --- COMPACT SCORE LEGEND (NEW) --- */
-  .score-legend-wrapper {
-    margin-top: 15px;
-    background: #0f0f0f;
-    padding: 10px 20px; /* Slimmer padding */
-    border-radius: 50px; /* Pill shape */
-    border: 1px solid #222;
-    display: flex; /* Horizontal Layout */
+  /* --- COMPACT SCORE LEGEND (Refined) --- */
+.score-legend-wrapper {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 12px 25px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
     align-items: center;
-    justify-content: space-between; /* Pushes Title Left, Badges Right */
+    justify-content: space-between;
   }
   
   .score-legend-wrapper h3 {
     margin: 0;
     font-size: 0.9rem;
-    color: #666;
+    color: #888; /* Keep the title ("Score Guide") subtle */
     display: flex;
     align-items: center;
     gap: 8px;
@@ -292,47 +251,83 @@
   }
   
   .score-grid {
-    display: flex; /* Horizontal Row */
-    gap: 15px;
+    display: flex;
+    gap: 20px;
     align-items: center;
   }
   
   .score-item {
-    font-size: 0.75rem; /* Smaller text */
-    color: #888;
+    font-size: 0.85rem;
+    color: #ffffff; /* 1. TEXT IS NOW WHITE */
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    font-weight: 500;
   }
   
   .badge {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 18px; /* Smaller Dots */
-    height: 18px;
+    width: 20px;  /* 2. Made slightly bigger so the number fits */
+    height: 20px;
     border-radius: 50%;
+    
+    color: #000000; /* 3. NUMBER INSIDE IS NOW BLACK */
     font-weight: bold;
-    color: #000;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
+  /* Badge Colors */
+  .badge-0 { background-color: #ff4444; box-shadow: 0 0 5px #ff4444; }
+  .badge-1 { background-color: #ffbb33; box-shadow: 0 0 5px #ffbb33; }
+  .badge-2 { background-color: #ffeb3b; box-shadow: 0 0 5px #ffeb3b; }
+  .badge-3 { background-color: #00C851; box-shadow: 0 0 5px #00C851; }
+  .badge-4 { background-color: #00ff66; box-shadow: 0 0 10px #00ff66; }
   
-  /* Badge Colors matching the zxcvbn scale */
-  .badge-0 { background-color: #ff4444; } /* Red */
-  .badge-1 { background-color: #ffbb33; } /* Orange */
-  .badge-2 { background-color: #ffeb3b; } /* Yellow */
-  .badge-3 { background-color: #00C851; } /* Green */
-  .badge-4 { background-color: #00ff66; box-shadow: 0 0 5px #00ff66; } /* Bright Green + Glow */
-  
-  /* Mobile Responsiveness */
+  /* Mobile */
   @media (max-width: 600px) {
-    .score-legend-wrapper {
-      flex-direction: column;
-      gap: 10px;
-      border-radius: 15px;
+    .score-legend-wrapper { flex-direction: column; gap: 15px; border-radius: 20px; }
+    .score-grid { flex-wrap: wrap; justify-content: center; }
+    .grid-stats { grid-template-columns: 1fr; }
+  }
+  /* --- COCKPIT MODE (Fills the empty space) --- */
+@media (min-width: 1100px) {
+    /* This turns the layout into 2 columns: Left (Cards) & Right (Graph) */
+    .results-panel {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr; /* Graph takes more space */
+      grid-template-rows: auto auto;    /* Rows adjust automatically */
+      gap: 2rem;
+      align-items: start;
     }
-    .score-grid {
-      flex-wrap: wrap;
+  
+    /* 1. STRENGTH BAR (Spans full width at top) */
+    .strength-bar-bg {
+      grid-column: 1 / -1; 
+      margin-bottom: 1rem;
+    }
+  
+    /* 2. STATS CARDS (Stack vertically on the LEFT) */
+    .grid-stats {
+      display: flex;       /* Switch to Flex column */
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 0;
+    }
+  
+    /* 3. GRAPH (Fills the entire RIGHT side) */
+    .chart-wrapper {
+      margin-top: 0;
+      height: 100%;        /* Stretch to match height */
+      min-height: 320px;   /* Make it tall and impressive */
+      display: flex;
+      flex-direction: column;
       justify-content: center;
+    }
+  
+    /* 4. SCORE LEGEND (Spans full width at bottom) */
+    .score-legend-wrapper {
+      grid-column: 1 / -1;
+      margin-top: 1rem;
     }
   }
