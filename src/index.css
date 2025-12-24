@@ -14,9 +14,9 @@
   
   .dashboard-container {
     width: 100%;
-    max-width: 500px; /* Made wider */
+    max-width: 500px;
     background: #121212;
-    padding: 3rem; /* More breathing room */
+    padding: 3rem;
     border-radius: 20px;
     border: 1px solid #333;
     box-shadow: 0 0 40px rgba(0, 200, 81, 0.05);
@@ -25,7 +25,7 @@
   
   /* --- BIGGER TYPOGRAPHY --- */
   .title-glow {
-    font-size: 3.5rem; /* Massive Title */
+    font-size: 3.5rem;
     margin: 10px 0;
     text-shadow: 0 0 10px rgba(0, 200, 81, 0.5);
     letter-spacing: -2px;
@@ -51,8 +51,8 @@
   /* --- CHUNKY INPUTS --- */
   .cyber-input {
     width: 100%;
-    padding: 20px; /* Bigger padding */
-    font-size: 1.5rem; /* Bigger Text */
+    padding: 20px;
+    font-size: 1.5rem;
     border-radius: 12px;
     border: 2px solid #333;
     background-color: #1a1a1a;
@@ -85,7 +85,7 @@
     cursor: pointer;
     border-radius: 8px;
     font-family: 'Courier New', monospace;
-    font-size: 1.2rem; /* Bigger Tab Text */
+    font-size: 1.2rem;
     font-weight: bold;
     transition: all 0.3s;
   }
@@ -127,7 +127,7 @@
     border-radius: 12px;
     border: 2px dashed #00C851;
     color: #00C851;
-    font-size: 1.8rem; /* Huge Generated Password */
+    font-size: 1.8rem;
     font-weight: bold;
     cursor: pointer;
     text-align: center;
@@ -173,8 +173,9 @@
   .eye-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; font-size: 1.5rem; display: flex; }
   .eye-icon:hover { color: #00C851; }
   .copy-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #fff; font-size: 1.2rem; }
+  
   /* --- VAULT & ACTIONS --- */
-.save-icon-input {
+  .save-icon-input {
     position: absolute;
     right: 55px; /* Sits next to the eye icon */
     top: 50%;
@@ -191,18 +192,6 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-  }
-  
-  .gen-result {
-    background: #050505;
-    padding: 20px;
-    border-radius: 12px;
-    border: 2px dashed #00C851;
-    color: #00C851;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    word-break: break-all;
   }
   
   .gen-actions {
@@ -270,57 +259,62 @@
   
   .vault-actions button:hover { color: #fff; background: #333; }
   .vault-actions button.delete-btn:hover { color: #ff4444; background: #330000; }
+  
   /* --- GRAPH --- */
-.chart-wrapper {
+  .chart-wrapper {
     margin-top: 20px;
     background: #1a1a1a;
     padding: 15px;
     border-radius: 12px;
     border: 1px solid #333;
   }
-  /* --- SCORE LEGEND --- */
-.score-legend-wrapper {
-    margin-top: 25px;
-    background: #111;
-    padding: 15px;
-    border-radius: 12px;
+  
+  /* --- COMPACT SCORE LEGEND (NEW) --- */
+  .score-legend-wrapper {
+    margin-top: 15px;
+    background: #0f0f0f;
+    padding: 10px 20px; /* Slimmer padding */
+    border-radius: 50px; /* Pill shape */
     border: 1px solid #222;
+    display: flex; /* Horizontal Layout */
+    align-items: center;
+    justify-content: space-between; /* Pushes Title Left, Badges Right */
   }
   
   .score-legend-wrapper h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1rem;
-    color: #888;
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
     display: flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
   }
   
   .score-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Responsive Grid */
-    gap: 10px;
+    display: flex; /* Horizontal Row */
+    gap: 15px;
+    align-items: center;
   }
   
   .score-item {
-    font-size: 0.8rem;
-    color: #aaa;
+    font-size: 0.75rem; /* Smaller text */
+    color: #888;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
   
   .badge {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 24px;
-    height: 24px;
+    width: 18px; /* Smaller Dots */
+    height: 18px;
     border-radius: 50%;
     font-weight: bold;
     color: #000;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
   
   /* Badge Colors matching the zxcvbn scale */
@@ -328,4 +322,17 @@
   .badge-1 { background-color: #ffbb33; } /* Orange */
   .badge-2 { background-color: #ffeb3b; } /* Yellow */
   .badge-3 { background-color: #00C851; } /* Green */
-  .badge-4 { background-color: #00ff66; box-shadow: 0 0 8px #00ff66; } /* Bright Green + Glow */
+  .badge-4 { background-color: #00ff66; box-shadow: 0 0 5px #00ff66; } /* Bright Green + Glow */
+  
+  /* Mobile Responsiveness */
+  @media (max-width: 600px) {
+    .score-legend-wrapper {
+      flex-direction: column;
+      gap: 10px;
+      border-radius: 15px;
+    }
+    .score-grid {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
