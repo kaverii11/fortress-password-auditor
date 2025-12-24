@@ -1,0 +1,90 @@
+:root {
+    font-family: 'Courier New', monospace;
+    background-color: #111;
+    color: #fff;
+  }
+  
+  body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .dashboard-container {
+    width: 100%;
+    max-width: 600px;
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 15px;
+    border: 1px solid #333;
+    box-shadow: 0 0 20px rgba(0, 200, 81, 0.1);
+  }
+  
+  .cyber-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background-color: #222;
+    color: #fff;
+    outline: none;
+    margin-bottom: 20px;
+  }
+  .cyber-input:focus {
+    border-color: #00C851;
+    box-shadow: 0 0 8px rgba(0, 200, 81, 0.3);
+  }
+  
+  .strength-bar-bg {
+    height: 10px;
+    width: 100%;
+    background-color: #333;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  
+  .grid-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .card {
+    background: #252525;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #333;
+  }
+  /* Wrapper to hold the input and the icon together */
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  /* Make sure text doesn't go behind the eye icon */
+  .cyber-input {
+    width: 100%;
+    padding-right: 45px; /* Add space for the icon */
+    box-sizing: border-box; /* Ensures padding doesn't break layout */
+  }
+  
+  /* Position the eye icon */
+  .eye-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%); /* Center perfectly vertically */
+    cursor: pointer;
+    color: #888;
+    font-size: 1.2rem;
+    display: flex; /* Fixes alignment quirks */
+  }
+  
+  .eye-icon:hover {
+    color: #00C851; /* Turns green when you hover! */
+  }
