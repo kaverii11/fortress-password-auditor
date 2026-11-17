@@ -15,16 +15,13 @@ from a cryptographically secure random source, and keeps saved passwords in an *
 ## 📸 Interface
 
 <p align="center">
-  <img width="98%" alt="Dashboard View" src="https://github.com/user-attachments/assets/ee036218-19ce-4772-bb35-ecf5d60df113" />
+  <img width="98%" alt="Audit: pattern analysis, breach check and strength trend" src="docs/screenshots/audit.png" />
 
-  <img width="48%" alt="Audit Analysis" src="https://github.com/user-attachments/assets/fa4ef67d-f62f-4b3a-acb1-7d9f2eca32c9" />
-  <img width="48%" alt="Vault View" src="https://github.com/user-attachments/assets/bbc9f8da-2a5f-425b-b128-c48a0a3ed021" />
-
-  <img width="48%" alt="Generator View" src="https://github.com/user-attachments/assets/925cdac2-f9f5-48b5-a3d1-135d6a767dcd" />
-  <img width="48%" alt="Graph View" src="https://github.com/user-attachments/assets/a68588d9-b7cc-490b-b49b-e265f2e5a5a8" />
+  <img width="48%" alt="Generator" src="docs/screenshots/generator.png" />
+  <img width="48%" alt="Encrypted vault, unlocked" src="docs/screenshots/vault.png" />
 </p>
 
-*(Screenshots are from before the vault was encrypted; the vault tab now opens with a master-password prompt.)*
+<p align="center"><img width="30%" alt="Mobile layout" src="docs/screenshots/mobile.png" /></p>
 
 ---
 
