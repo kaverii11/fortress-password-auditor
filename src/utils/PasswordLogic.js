@@ -28,7 +28,7 @@ export const checkPwned = async (password) => {
     const match = text.match(regex);
     
     return match ? parseInt(match[1]) : 0;
-  } catch (error) {
+  } catch {
     return null; 
   }
 };

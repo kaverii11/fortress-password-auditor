@@ -1,18 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { analyzePassword, checkPwned } from './utils/PasswordLogic';
 import { wordList } from './utils/words';
-import { FaShieldAlt, FaExclamationTriangle, FaCheckCircle, FaEye, FaEyeSlash, FaDice, FaCopy, FaSave, FaTrash, FaHdd, FaGithub, FaLinkedin, FaInfoCircle } from 'react-icons/fa';
+import { randomInt, pick } from './utils/secureRandom';
+import { newSalt, deriveKey, encryptVault, unlockVault, WrongPasswordError } from './utils/vaultCrypto';
+import { FaShieldAlt, FaExclamationTriangle, FaCheckCircle, FaEye, FaEyeSlash, FaDice, FaCopy, FaSave, FaTrash, FaHdd, FaGithub, FaLinkedin, FaInfoCircle, FaLock, FaUnlock } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import './index.css';
+
+const VAULT_STORAGE_KEY = 'fortressVaultEnc';
+const LEGACY_STORAGE_KEY = 'fortressVault'; // old plaintext format, migrated on unlock
+
+const XKCD_WORDS = 4;
+const RANDOM_LENGTH = 16;
+const RANDOM_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+const XKCD_BITS = XKCD_WORDS * Math.log2(wordList.length) + Math.log2(900);
+const RANDOM_BITS = RANDOM_LENGTH * Math.log2(RANDOM_CHARS.length);
 
 function App() {
   const [activeTab, setActiveTab] = useState('auditor'); 
   
   // --- VAULT STATE ---
-  const [vault, setVault] = useState(() => {
-    const saved = localStorage.getItem('fortressVault');
-    return saved ? JSON.parse(saved) : [];
-  });
+  // The vault lives in localStorage only as AES-GCM ciphertext (see utils/vaultCrypto.js).
+  // The derived key and the decrypted items exist only in memory while unlocked.
+  const [vault, setVault] = useState([]);
+  const [vaultKey, setVaultKey] = useState(null);      // CryptoKey (non-extractable), null = locked
+  const [vaultSalt, setVaultSalt] = useState(null);
+  const [hasVault, setHasVault] = useState(() => localStorage.getItem(VAULT_STORAGE_KEY) !== null);
+  const [masterInput, setMasterInput] = useState('');
+  const [masterConfirm, setMasterConfirm] = useState('');
+  const [vaultError, setVaultError] = useState('');
+  const [vaultBusy, setVaultBusy] = useState(false);
+  const skipNextSave = useRef(true);
 
   // --- AUDITOR STATE ---
   const [password, setPassword] = useState('');
@@ -29,13 +47,68 @@ function App() {
   const [genType, setGenType] = useState('xkcd');
   const [copied, setCopied] = useState(false);
 
-  // --- PERSIST VAULT ---
+  // --- PERSIST VAULT (encrypted, only while unlocked) ---
   useEffect(() => {
-    localStorage.setItem('fortressVault', JSON.stringify(vault));
-  }, [vault]);
+    if (!vaultKey || !vaultSalt) return;
+    if (skipNextSave.current) { skipNextSave.current = false; return; }
+    let cancelled = false;
+    encryptVault(vault, vaultKey, vaultSalt).then((record) => {
+      if (!cancelled) localStorage.setItem(VAULT_STORAGE_KEY, JSON.stringify(record));
+    });
+    return () => { cancelled = true; };
+  }, [vault, vaultKey, vaultSalt]);
+
+  // Old versions kept the vault as plain JSON; fold it into the encrypted vault, then delete it.
+  const takeLegacyItems = () => {
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (!legacy) return [];
+    try { return JSON.parse(legacy) || []; } catch { return []; }
+  };
+
+  const createVault = async () => {
+    setVaultError('');
+    if (masterInput.length < 10) { setVaultError('Use at least 10 characters for the master password.'); return; }
+    if (masterInput !== masterConfirm) { setVaultError('Passwords do not match.'); return; }
+    setVaultBusy(true);
+    const salt = newSalt();
+    const key = await deriveKey(masterInput, salt);
+    const items = takeLegacyItems();
+    localStorage.setItem(VAULT_STORAGE_KEY, JSON.stringify(await encryptVault(items, key, salt)));
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
+    skipNextSave.current = true;
+    setVault(items); setVaultSalt(salt); setVaultKey(key); setHasVault(true);
+    setMasterInput(''); setMasterConfirm(''); setVaultBusy(false);
+  };
+
+  const openVault = async () => {
+    setVaultError('');
+    setVaultBusy(true);
+    try {
+      const record = JSON.parse(localStorage.getItem(VAULT_STORAGE_KEY));
+      const { key, salt, items } = await unlockVault(record, masterInput);
+      const legacy = takeLegacyItems().filter(l => !items.some(i => i.pass === l.pass));
+      skipNextSave.current = legacy.length === 0;
+      if (legacy.length) localStorage.removeItem(LEGACY_STORAGE_KEY);
+      setVault([...legacy, ...items]); setVaultSalt(salt); setVaultKey(key);
+      setMasterInput('');
+    } catch (e) {
+      setVaultError(e instanceof WrongPasswordError ? e.message : 'Could not read the vault.');
+    }
+    setVaultBusy(false);
+  };
+
+  const lockVault = () => {
+    setVaultKey(null); setVaultSalt(null); setVault([]);
+    skipNextSave.current = true;
+  };
 
   const saveToVault = (pass) => {
     if (!pass) return;
+    if (!vaultKey) {
+      alert("Unlock your vault first.");
+      setActiveTab('vault');
+      return;
+    }
     if (vault.some(item => item.pass === pass)) {
       alert("Password already in Vault!");
       return;
@@ -89,19 +162,19 @@ function App() {
   // --- GENERATOR LOGIC ---
   const generatePass = () => {
     setCopied(false);
+    // All randomness comes from crypto.getRandomValues (see utils/secureRandom.js).
     if (genType === 'xkcd') {
       let pass = "";
-      for (let i = 0; i < 4; i++) {
-        const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
-        pass += randomWord.charAt(0).toUpperCase() + randomWord.slice(1) + (i < 3 ? "-" : "");
+      for (let i = 0; i < XKCD_WORDS; i++) {
+        const randomWord = pick(wordList);
+        pass += randomWord.charAt(0).toUpperCase() + randomWord.slice(1) + (i < XKCD_WORDS - 1 ? "-" : "");
       }
-      pass += Math.floor(100 + Math.random() * 900);
+      pass += 100 + randomInt(900);
       setGenPassword(pass);
     } else {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
       let pass = "";
-      for (let i = 0; i < 16; i++) {
-        pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      for (let i = 0; i < RANDOM_LENGTH; i++) {
+        pass += pick(RANDOM_CHARS);
       }
       setGenPassword(pass);
     }
@@ -133,7 +206,7 @@ function App() {
         <button className={`tab-btn ${activeTab === 'auditor' ? 'active' : ''}`} onClick={() => setActiveTab('auditor')}>Audit</button>
         <button className={`tab-btn ${activeTab === 'generator' ? 'active' : ''}`} onClick={() => setActiveTab('generator')}>Generate</button>
         <button className={`tab-btn ${activeTab === 'vault' ? 'active' : ''}`} onClick={() => setActiveTab('vault')}>
-           Vault ({vault.length})
+           {vaultKey ? <><FaUnlock /> Vault ({vault.length})</> : <><FaLock /> Vault</>}
         </button>
       </div>
 
@@ -166,19 +239,22 @@ function App() {
               
               <div className="grid-stats">
                 <div className="card">
-                  <h3>🧠 AI Analysis</h3>
+                  <h3>🧠 Pattern Analysis</h3>
                   <p style={{ color: getColor(stats.score) }}>{stats.feedback ? `⚠️ ${stats.feedback}` : "✅ No obvious patterns found."}</p>
                   <small style={{ color: '#888' }}>Time to crack: {stats.crackTime}</small>
                 </div>
                 <div className="card">
-                  <h3>🌍 Dark Web Scan</h3>
-                  {loading ? <p>Scanning...</p> : (
-                    pwnedCount > 0 ? (
+                  <h3>🌍 Breach Check</h3>
+                  {loading ? <p>Checking...</p> : (
+                    pwnedCount === null ? (
+                      <p style={{ color: '#888' }}>Breach check unavailable.</p>
+                    ) : pwnedCount > 0 ? (
                       <p style={{ color: '#ff4444' }}><FaExclamationTriangle /> Leaked {pwnedCount.toLocaleString()} times!</p>
                     ) : (
                       <p style={{ color: '#00C851' }}><FaCheckCircle /> No leaks found.</p>
                     )
                   )}
+                  <small style={{ color: '#888' }}>Have I Been Pwned, k-anonymity: only the first 5 characters of the SHA-1 hash are sent.</small>
                 </div>
               </div>
 
@@ -234,12 +310,48 @@ function App() {
              </div>
            )}
            {copied && <small style={{ color: '#00C851', display: 'block', marginTop: '5px', textAlign: 'center' }}>Copied!</small>}
+           <small className="entropy-note">
+             {genType === 'xkcd'
+               ? `${XKCD_WORDS} words from the EFF list (7,776 words) + a 3-digit number: about ${XKCD_BITS.toFixed(1)} bits of entropy.`
+               : `${RANDOM_LENGTH} characters from a ${RANDOM_CHARS.length}-character set: about ${RANDOM_BITS.toFixed(1)} bits of entropy.`}
+             {' '}Generated with crypto.getRandomValues.
+           </small>
         </div>
       )}
 
       {/* === VAULT TAB === */}
-      {activeTab === 'vault' && (
+      {activeTab === 'vault' && !vaultKey && (
         <div className="vault-panel">
+          <div className="vault-lock-card">
+            <FaLock size={40} style={{ marginBottom: '1rem', color: '#00C851' }} />
+            <h3>{hasVault ? 'Unlock your vault' : 'Create a master password'}</h3>
+            <p className="vault-lock-help">
+              {hasVault
+                ? 'Your vault is stored encrypted in this browser. Enter your master password to decrypt it.'
+                : 'Your vault will be encrypted (AES-GCM) with a key derived from this password. It is never stored, and it cannot be recovered if you forget it.'}
+            </p>
+            <input type="password" className="cyber-input vault-master-input" placeholder="Master password"
+              value={masterInput} onChange={(e) => setMasterInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && hasVault) openVault(); }} />
+            {!hasVault && (
+              <input type="password" className="cyber-input vault-master-input" placeholder="Confirm master password"
+                value={masterConfirm} onChange={(e) => setMasterConfirm(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') createVault(); }} />
+            )}
+            {vaultError && <p className="vault-error"><FaExclamationTriangle /> {vaultError}</p>}
+            <button className="generate-btn" disabled={vaultBusy} onClick={hasVault ? openVault : createVault}>
+              <FaUnlock /> {vaultBusy ? 'Deriving key...' : hasVault ? 'Unlock' : 'Create encrypted vault'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'vault' && vaultKey && (
+        <div className="vault-panel">
+          <div className="vault-toolbar">
+            <span><FaUnlock /> Unlocked (AES-GCM, key held in memory only)</span>
+            <button className="lock-btn" onClick={lockVault}><FaLock /> Lock</button>
+          </div>
           {vault.length === 0 ? (
              <div style={{ textAlign: 'center', color: '#666', padding: '2rem' }}>
               <FaHdd size={40} style={{ marginBottom: '1rem', opacity: 0.5 }} />
@@ -262,7 +374,7 @@ function App() {
       )}
 
       <div className="footer">
-        <p>🔒 Secure. Private. Client-Side Only.</p>
+        <p>🔒 Runs in your browser. Only a 5-character hash prefix is ever sent (to Have I Been Pwned).</p>
         <div className="social-links" style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '10px' }}>
           <a href="https://github.com/kaverii11" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '1.5rem' }}><FaGithub /></a>
           <a href="https://www.linkedin.com/in/kaveri-sharma-48220926a/" target="_blank" rel="noopener noreferrer" style={{ color: '#0077b5', fontSize: '1.5rem' }}><FaLinkedin /></a>
