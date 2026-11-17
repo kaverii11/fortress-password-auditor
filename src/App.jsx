@@ -377,7 +377,7 @@ function App() {
         <p>🔒 Runs in your browser. Only a 5-character hash prefix is ever sent (to Have I Been Pwned).</p>
         <div className="social-links" style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '10px' }}>
           <a href="https://github.com/kaverii11" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '1.5rem' }}><FaGithub /></a>
-          <a href="https://www.linkedin.com/in/kaveri-sharma-48220926a/" target="_blank" rel="noopener noreferrer" style={{ color: '#0077b5', fontSize: '1.5rem' }}><FaLinkedin /></a>
+          <a href="https://www.linkedin.com/in/kaveri-sharma-aiml/" target="_blank" rel="noopener noreferrer" style={{ color: '#0077b5', fontSize: '1.5rem' }}><FaLinkedin /></a>
         </div>
         <p style={{ marginTop: '10px', fontSize: '0.8rem', color: '#666' }}>© 2025 Kaveri Sharma</p>
       </div>
