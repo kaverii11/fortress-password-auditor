@@ -202,7 +202,7 @@ function App() {
       
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <FaShieldAlt size={80} color="#00C851" style={{ marginBottom: '10px' }} />
-        <h1 className="title-glow">FORTRESS AI</h1>
+        <h1 className="title-glow">FORTRESS</h1>
         <p className="subtitle">Password Auditor, Generator & Encrypted Vault</p>
         <p className="branding">Architected by <span className="highlight">@kaverii11</span></p>
       </div>
